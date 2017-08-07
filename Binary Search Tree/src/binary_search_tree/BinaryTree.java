@@ -1,20 +1,29 @@
+/* This is the BinaryTree.java class which handles the creation and all the operations on a Binary Search Tree.
+ * This class also contains the Private class Node which handles the creation and all the operations on a single Node
+ * inside the Binary Search Tree.
+ * Coded by Christopher Rosenfelt for CSI 213
+ */
 package binary_search_tree;
 
 public class BinaryTree 
 {
-	// Fields
+	// Fields - counter keeps track of how many Nodes are in the tree
+	// while arrayCounter is used for the operations that require putting
+	// the information from the Nodes in the tree into an Array for further usage
 	private int counter, arrayCounter;
 	private Node root;
 	
-	// Constructor
+	// Constructor for BinaryTree class
 	public BinaryTree()
 	{
+		// Initialize field values
 		this.counter = 0;
+		this.arrayCounter = 0;
 		this.root = null;
 	}
 	
 	// Counter Getter
-	public int getCounter()
+	private int getCounter()
 	{
 		return this.counter;
 	}
@@ -25,20 +34,20 @@ public class BinaryTree
 		this.counter = counter;
 	}
 	
-	// Counter incrementer
+	// Counter incrementer - increment by 1 to track each Node insertion
 	private void incrementCounter()
 	{
-		this.counter = getCounter() + 1;
+		this.counter++;
 	}
 		
-	// Counter decrementer
+	// Counter decrementer - decrement by 1 to track each Node deletion
 	private void decrementCounter()
 	{
-		this.counter = getCounter() - 1;
+		this.counter--;
 	}
 	
 	// Array Counter Getter
-	public int getArrayCounter()
+	private int getArrayCounter()
 	{
 		return this.arrayCounter;
 	}
@@ -47,6 +56,12 @@ public class BinaryTree
 	private void setArrayCounter(int arrayCounter)
 	{
 		this.arrayCounter = arrayCounter;
+	}
+	
+	// Array Counter incrementer
+	private void incrementArrayCounter()
+	{
+		this.arrayCounter++;
 	}
 	
 	// Root Getter
@@ -61,21 +76,23 @@ public class BinaryTree
 		this.root = root;
 	}
 	
-	// Is Tree empty?
+	// Method that determines and returns if the tree is currently empty
 	private boolean isEmpty()
 	{
-		return this.root == null;
+		return getRoot() == null;
 	}
 	
 	// Method that inserts a Node containing the user inputted String in the correct lexicographic
-	// position in the Binary Search Tree
+	// position in the Binary Search Tree. Calls on the insert method passing the String as well as the
+	// boolean true to ensure that the insertion method balances the tree after each Node insertion if necessary
 	public void insert(String name)
 	{
 		insert(name, true);
 	}
 	
 	// Method that inserts a Node containing the user inputted String in the correct lexicographic
-	// position in the Binary Search Tree
+	// position in the Binary Search Tree, may check to balance the tree depending on whether true or false was
+	// passed into its checkBalance boolean
 	private void insert(String name, boolean checkBalance)
 	{
 		// Create the Node with the given String
@@ -91,20 +108,26 @@ public class BinaryTree
 		// Tree is not empty so use the insert helper to place the Node in the correct spot
 		else
 		{
+			// Passing the Root reference as the starting point for the Node insertion
+			// as well as the reference to the newly create Node
 			insert(getRoot(), newNode);
 			
-			// Rebalance the tree only if necessary
+			// Balance the tree only if necessary - ie. checkBalance is true and
+			// the current depth of the tree is greater than what it should be based on 
+			// the total amount of Nodes in the tree
 			if(checkBalance && depth() > howManyLevels())
 			{
+				// Call the balance method to balance the tree
 				balance();
 			}
 		}
 	}//END insert method
 	
-	// Recursive insert helper
+	// Recursive insert helper - recursively checks where the newNode should be inserted until it finds
+	// the appropriate placement in the Binary Search Tree
 	private void insert(Node current, Node newNode)
 	{
-		// Prevent the same name from being inserted as a new Node
+		// Prevent the same name from being inserted as a new Node by doing nothing
 		if(newNode.getName().equalsIgnoreCase(current.getName()))
 		{
 			return;
@@ -112,14 +135,14 @@ public class BinaryTree
 		// The name is lexicographically less than the current Node's name
 		else if(newNode.getName().compareToIgnoreCase(current.getName()) < 0)
 		{
-			// Spot is open, then add name
+			// Spot is open, add name
 			if(current.getLeftChild() == null)
 			{
 				current.setLeftChild(newNode);
 				newNode.setParent(current);
 				incrementCounter();
 			}
-			// Keep searching through the Binary Tree
+			// Spot is occupied, keep searching through the Binary Tree recursively
 			else
 			{
 				insert(current.getLeftChild(), newNode);
@@ -128,38 +151,41 @@ public class BinaryTree
 		// The name is lexicographically greater than the current Node's name
 		else
 		{
-			// Spot is open, then add name
+			// Spot is open, add name
 			if(current.getRightChild() == null)
 			{
 				current.setRightChild(newNode);
 				newNode.setParent(current);
 				incrementCounter();
 			}
-			// Keep searching through the Binary Tree
+			// Spot is occupied, keep searching through the Binary Tree recursively
 			else
 			{
 				insert(current.getRightChild(), newNode);
 			}
 		}
-	}
+	}// END recursive insert method
 	
 	// Method that searches the binary tree for the Node that contains the inputted String
-	public Node search(String name)
+	// used by delete method to find the appropriate Node to delete
+	private Node search(String name)
 	{
 		// Check to see if the list is empty
 		if(isEmpty())
 		{
-			///////////////////////////////////////////
-			System.out.println("The list is empty!");
+			// Return null which will be checked for by the method that called it
 			return null;
 		}
-		// Use the recursive search method to find the Node containing the String
+		// Tree is not empty so use the recursive search method starting at the root reference 
+		// to find the correct Node containing the String name
 		return search(getRoot(), name);
 	}// END search
 	
-	// Recursive search helper method
+	// Recursive search helper method, recursively traverse the tree looking for the Node with
+	// the passed in String name, returns the reference to that Node if found otherwise returns null
 	private Node search(Node traverse, String name)
 	{	
+		// Haven't reach a dead-end yet
 		if(traverse != null)
 		{
 			// Check to see if the current Node matches the String
@@ -171,13 +197,13 @@ public class BinaryTree
 			// The name is lexicographically less than the current Node's name
 			else if(name.compareToIgnoreCase(traverse.getName()) < 0)
 			{
-				// Keep searching through the tree
+				// Keep searching through the left subtree
 				return search(traverse.getLeftChild(), name); 
 			}
-			// The name is lexicographically less than the current Node's name
+			// The name is lexicographically greater than the current Node's name
 			else
 			{
-				// Keep searching through the tree
+				// Keep searching through the right subtree
 				return search(traverse.getRightChild(), name);
 			}
 		}	
@@ -188,7 +214,7 @@ public class BinaryTree
 	// Method that deletes the Node containing the inputted String from the Binary Tree
 	public boolean delete(String name)
 	{
-		// Find the location of the Node with the search method
+		// Find the location of the Node with the search method and assign it to current
 		Node current = search(name);
 		
 		// Return False if the Node was not found
@@ -229,7 +255,7 @@ public class BinaryTree
 				// Find the minimum of the Right Subtree of the Node to delete to use as the replacement
 				Node minimum = findMinimum(current.getRightChild());
 				
-				// Copy the String from the minimum Node to the Node we are deleting
+				// Copy the String from the minimum Node to the original Node we were supposed to delete
 				current.setName(minimum.getName());
 				
 				// Delete what used to be the minimum from the Tree
@@ -318,7 +344,7 @@ public class BinaryTree
 					decrementCounter();
 			}
 			// Node to delete only has a right child
-			else if(getRoot().getLeftChild() == null)
+			else if(current.getLeftChild() == null)
 			{
 				// Connect the Node to delete's parent and right child
 				// Need to first find out what type of child the Node to delete is
@@ -343,7 +369,7 @@ public class BinaryTree
 				// Find the minimum of the Right Subtree of the Node to delete to use as the replacement
 				Node minimum = findMinimum(current.getRightChild());
 				
-				// Copy the String from the minimum Node to the Node we are deleting
+				// Copy the String from the minimum Node to the Node we were supposed to delete
 				current.setName(minimum.getName());
 				
 				// Delete what used to be the minimum from the Tree
@@ -392,7 +418,8 @@ public class BinaryTree
 			}			
 		}// END of deleting any case except for Root
 		
-		// Rebalance the tree only if necessary
+		// Balance the tree only if necessary - the current depth of the tree is greater than what it should be based on 
+		// the total amount of Nodes in the tree
 		if(depth() > howManyLevels())
 		{
 			balance();
@@ -402,7 +429,8 @@ public class BinaryTree
 	}//END delete method
 	
 	// Method that is used to find the Node reference to the "minimum" of the Right Subtree
-	// of the Node that is to be deleted to use as the replacement
+	// of the Node that is to be deleted to use as the replacement. The Node current is initially passed in
+	// as the right subtree of the Node to delete
 	private Node findMinimum(Node current)
 	{
 		// Current Node is the minimum
@@ -418,20 +446,22 @@ public class BinaryTree
 	}
 	
 	// Method that prints the tree based on the traversal order that is passed in by returning a newline String per Node name
-	// i.e. Inorder, Preorder, or Postorder
+	// i.e. Inorder, Preorder, or Postorder - it uses a String array as a helper in Storing the String of the Nodes in the tree in 
+	// the selected traversing order
 	public String print(int option)
 	{
-		// The binary tree hasn't been created yet
+		// The binary tree hasn't been created yet so no Nodes exist
 		if(isEmpty())
 		{
 			return "The binary tree is empty!";
 		}
 		
 		// Create the temporary String array to write the name of the Nodes in
-		// and set the global array counter to 0 for the proper insertion
-		String[] temp = new String[getCounter()];
+		// and set the array counter to 0 for the proper insertion
+		String[] temp = new String[getCounter()]; // getCounter() returns the number of Nodes currently in the Tree
 		setArrayCounter(0);
 		
+		// Option is passed into the method to determine which traversing order to use
 		switch(option)
 		{
 			case 0:
@@ -455,68 +485,78 @@ public class BinaryTree
 		return content;
 	}
 	
-	// Inorder traversal recursively while writing the name of each Node into the file
+	// Inorder recursive traversal while writing the name of each Node into the String array
 	private void inorder(String[] content, Node current)
 	{
 		if(current != null)
 		{
+			// Left recursive traversal
 			inorder(content, current.getLeftChild());
 			
-			// Write the name of each Node into the String array
+			// Write the name of the current Node into the String array
 			content[getArrayCounter()] = current.getName();
-			setArrayCounter(getArrayCounter() + 1);
+			incrementArrayCounter();
 			
+			// Right recursive traversal
 			inorder(content, current.getRightChild());
 		}
-	}
+	}//END inorder method
 	
-	// Preorder traversal recursively while writing the name of each Node into the file
+	// Preorder recursive traversal while writing the name of each Node into the String array
 	private void preorder(String[] content, Node current)
 	{
 		if(current != null)
 		{
-			// Write the name of each Node into the String array
+			// Write the name of the current Node into the String array
 			content[getArrayCounter()] = current.getName();
-			setArrayCounter(getArrayCounter() + 1);
+			incrementArrayCounter();
 			
+			// Left recursive traversal
 			preorder(content, current.getLeftChild());
+			// Right recursive traversal
 			preorder(content, current.getRightChild());
 		}
-	}
+	}//END preorder method
 	
-	// Postorder traversal recursively while writing the name of each Node into the file
+	// Postorder recursive traversal while writing the name of each Node into the String array
 	private void postorder(String[] content, Node current)
 	{
 		if(current != null)
 		{
+			// Left recursive traversal
 			preorder(content, current.getLeftChild());
+			// Right recursive traversal
 			preorder(content, current.getRightChild());
 			
-			// Write the name of each Node into the String array
+			// Write the name of the current Node into the String array
 			content[getArrayCounter()] = current.getName();
-			setArrayCounter(getArrayCounter() + 1);
+			incrementArrayCounter();
 		}
-	}
+	}//END postorder method
 	
 	// Method that figures out the depth of the Binary Tree and returns it as an integer
-	public int depth()
+	private int depth()
 	{
+		// If tree is empty then there are 0 levels
 		if(isEmpty())
 		{
 			return 0;
 		}
-		
+		// Tree is not empty so use recursive depth method start at Root level 1 to figure out depth
 		return depth(getRoot(), 1);
 	}
 	
 	// Method that helps figure out the depth of the Binary Tree
-	public int depth(Node current, int level)
+	private int depth(Node current, int level)
 	{
 		// Current Node has two Children
 		if(current.hasTwo())
 		{
+			// Traverse left subtree and obtain its level
 			int tempLeft = (depth(current.getLeftChild(), level + 1));
+			// Traverse right subtree and obtain its level
 			int tempRight = (depth(current.getRightChild(), level + 1));
+			// Return the maximum of the levels that were traversed by the left and right subtrees
 			return Math.max(tempLeft, tempRight);
 		}
 		// Current Node has no children (aka is a leaf)
@@ -534,7 +574,8 @@ public class BinaryTree
 		{
 			return depth(current.getLeftChild(), level + 1);
 		}
-	}
+	}//END depth method
+	
 	// Method that destroys the Binary Tree
 	public void destroy()
 	{
@@ -542,11 +583,12 @@ public class BinaryTree
 		setCounter(0);
 	}
 	
-	// Method that balances the tree uses a new Tree and the find position method
+	// Method that balances the tree by creating a new Tree and using the balance recursive helper method
 	private void balance()
 	{	
 		BinaryTree balancedTree = new BinaryTree();
 		
+		// Call the balance method recursive helper
 		balance(balancedTree, 1, getCounter());
 		
 		// Add the last node of the tree that is skipped by the helper
@@ -556,34 +598,49 @@ public class BinaryTree
 		setRoot(balancedTree.getRoot());
 	}
 	
-	// Balance method recursive helper
+	// Balance recursive helper method - recursively finds the median of each subtree of the oldtree at the median spot
+	// using the find method to find the median Node each time and return its String name
 	private void balance(BinaryTree tree, int low, int high)
 	{
+		
 		if(low < high)
 		{
+			// The current median
 			int median = (low + high) / 2;
+			
+			// Insert the median  in the new Tree using the find method to find the median's String name
 			tree.insert(find(median), false);
+			// balance the left subtree of the current median
 			balance(tree, low, median);
+			// balance the right subtree of the current median
 			balance(tree, median + 1, high);
 		}
-	}
-	// Method that finds the Node at the specified position in the Binary tree inorder and returns the String
+	}//END balance recursive helper method
+	
+	
+	// Method that first stores the Strings of each Node in the Binary Tree inorder
+	// and then finds the Node at the specified position and returns its String name
 	private String find(int position)
 	{
+		// Temporary String array to store the node names of the old tree inorder
 		String[] temp = new String[getCounter()];
 		setArrayCounter(0);
 		
+		// use the inorder method to store the node names in the String array
 		inorder(temp ,getRoot());
 		
+		// Return the String name of the position after adjusting for the 0 based indexing of an array
 		return temp[position - 1];
-	}
+	}//END find method
 	
 	// Method that returns the minimum number of levels that would be needed to make a balanced tree with the
 	// current number of nodes in the binary tree
 	public int howManyLevels()
 	{
+		// Formula is the ceiling of the log base 2 of the current number of nodes + 1
 		return (int) Math.ceil(Math.log(getCounter() + 1) / Math.log(2));
 	}
+	
 	// Private Node class
 	private class Node
 	{
@@ -650,13 +707,13 @@ public class BinaryTree
 			this.parent = parent;
 		}
 		
-		// Node is a leaf?
+		// Method that determines and returns whether the Node is a leaf
 		private boolean isLeaf()
 		{
 			return getLeftChild() == null && getRightChild() == null;
 		}
 		
-		// Node has two children?
+		// Method that determines and returns whether the Node has two children
 		private boolean hasTwo()
 		{
 			return getLeftChild() != null && getRightChild() != null;
