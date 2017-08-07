@@ -1,41 +1,77 @@
 package binary_search_tree;
 
-public class Main 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+
+public class Main extends JFrame 
 {
+	final BinaryTree tree = new BinaryTree();
+	
 	public static void main(String[] args)
 	{
-		BinaryTree tree = new BinaryTree();
+		mainMenu();
+	}
 	
-		tree.insert("Alice");
-		tree.insert("Amanda");
-		tree.insert("Blaine");
-		tree.insert("Chris");
-		tree.insert("David");
-		tree.insert("Frank");
-		tree.insert("Roy");
-		tree.insert("Zach");
+	public static void mainMenu()
+	{
+		Main window = new Main();
+	}
+	
+	public Main()
+	{	
+		// The JRadioButtons and text
+		JLabel type = new JLabel("Traversal type:");
+		JRadioButton inorder = new JRadioButton("Inorder");
+		JRadioButton preorder = new JRadioButton("Preorder");
+		JRadioButton postorder = new JRadioButton("Postorder");
 		
+		// Add the JRadioButtons to a ButtonGroup
+		ButtonGroup radio = new ButtonGroup();
+		radio.add(inorder);
+		radio.add(preorder);
+		radio.add(postorder);
 		
-		System.out.println("*************************");
-		System.out.print(tree.print(0));
-		System.out.println("The number of nodes in the tree are " + tree.getCounter());
-		System.out.println("The balanced level of the tree should be " + tree.howManyLevels());
-		System.out.println("The level of the tree is " + tree.depth());
-		System.out.println("*************************");
-		System.out.print(tree.print(1));
+		// The JButtons
+		JButton addNode = new JButton("Add Node");
+		JButton deleteNode = new JButton("Delete Node");
+		JButton display = new JButton("Display Contents");
+		JButton draw = new JButton("Draw Tree");
+		JButton deleteTree = new JButton("Delete Tree");
+		JButton exit = new JButton("Exit");
 		
-		tree.delete("David");
-		tree.delete("Frank");
-		tree.delete("Zach");
-		tree.delete("Roy");
-		tree.delete("Blaine");
+		// The Panels
+		JPanel radios = new JPanel();
+		JPanel buttons = new JPanel();
 		
-		System.out.println("*************************");
-		System.out.print(tree.print(0));
-		System.out.println("The number of nodes in the tree are " + tree.getCounter());
-		System.out.println("The balanced level of the tree should be " + tree.howManyLevels());
-		System.out.println("The level of the tree is " + tree.depth());
-		System.out.println("*************************");
-		System.out.print(tree.print(1));
+		// Add the buttons to the corresponding panels
+		radios.add(type);
+		radios.add(inorder);
+		radios.add(preorder);
+		radios.add(postorder);
+		
+		buttons.setLayout(new GridLayout(2, 3));
+		buttons.add(addNode);
+		buttons.add(deleteNode);
+		buttons.add(display);
+		buttons.add(draw);
+		buttons.add(deleteTree);
+		buttons.add(exit);
+		
+		// The Window
+		setSize(500, 150);
+		setLocation(800,500);
+		setTitle("Binary Search Tree");
+		add(radios, BorderLayout.PAGE_START);
+		add(buttons, BorderLayout.CENTER);
+		setResizable(false);
+		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 }
