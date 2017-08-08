@@ -23,7 +23,7 @@ public class BinaryTree
 	}
 	
 	// Counter Getter
-	private int getCounter()
+	public int getCounter()
 	{
 		return this.counter;
 	}
@@ -524,9 +524,9 @@ public class BinaryTree
 		if(current != null)
 		{
 			// Left recursive traversal
-			preorder(content, current.getLeftChild());
+			postorder(content, current.getLeftChild());
 			// Right recursive traversal
-			preorder(content, current.getRightChild());
+			postorder(content, current.getRightChild());
 			
 			// Write the name of the current Node into the String array
 			content[getArrayCounter()] = current.getName();
@@ -588,11 +588,15 @@ public class BinaryTree
 	{	
 		BinaryTree balancedTree = new BinaryTree();
 		
-		// Call the balance method recursive helper
-		balance(balancedTree, 1, getCounter());
+		// Temporary String array to store the node names of the old tree inorder
+		String[] temp = new String[getCounter()];
+		setArrayCounter(0);
+				
+		// use the inorder method to store the node names in the String array
+		inorder(temp ,getRoot());
 		
-		// Add the last node of the tree that is skipped by the helper
-		balancedTree.insert(find(getCounter()), false);
+		// Call the balance method recursive helper to insert the Nodes into the new Tree in a "balanced" order
+		balance(balancedTree, temp, 0, getCounter());
 		
 		// Make the root of the old tree point to the new tree
 		setRoot(balancedTree.getRoot());
@@ -600,7 +604,7 @@ public class BinaryTree
 	
 	// Balance recursive helper method - recursively finds the median of each subtree of the oldtree at the median spot
 	// using the find method to find the median Node each time and return its String name
-	private void balance(BinaryTree tree, int low, int high)
+	private void balance(BinaryTree tree, String[] temp, int low, int high)
 	{
 		
 		if(low < high)
@@ -608,30 +612,15 @@ public class BinaryTree
 			// The current median
 			int median = (low + high) / 2;
 			
-			// Insert the median  in the new Tree using the find method to find the median's String name
-			tree.insert(find(median), false);
+			// Insert the median in the new Tree send false so that the insert method doesn't 
+			// attempt to balance the tree since its being inserted into a balance position as is
+			tree.insert(temp[median], false);
 			// balance the left subtree of the current median
-			balance(tree, low, median);
+			balance(tree, temp, low, median);
 			// balance the right subtree of the current median
-			balance(tree, median + 1, high);
+			balance(tree, temp, median + 1, high);
 		}
 	}//END balance recursive helper method
-	
-	
-	// Method that first stores the Strings of each Node in the Binary Tree inorder
-	// and then finds the Node at the specified position and returns its String name
-	private String find(int position)
-	{
-		// Temporary String array to store the node names of the old tree inorder
-		String[] temp = new String[getCounter()];
-		setArrayCounter(0);
-		
-		// use the inorder method to store the node names in the String array
-		inorder(temp ,getRoot());
-		
-		// Return the String name of the position after adjusting for the 0 based indexing of an array
-		return temp[position - 1];
-	}//END find method
 	
 	// Method that returns the minimum number of levels that would be needed to make a balanced tree with the
 	// current number of nodes in the binary tree
@@ -639,6 +628,12 @@ public class BinaryTree
 	{
 		// Formula is the ceiling of the log base 2 of the current number of nodes + 1
 		return (int) Math.ceil(Math.log(getCounter() + 1) / Math.log(2));
+	}
+	
+	public void toDraw(String[] temp)
+	{
+		setArrayCounter(0);
+		preorder(temp, getRoot());
 	}
 	
 	// Private Node class
