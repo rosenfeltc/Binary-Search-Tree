@@ -630,10 +630,26 @@ public class BinaryTree
 		return (int) Math.ceil(Math.log(getCounter() + 1) / Math.log(2));
 	}
 	
-	public void toDraw(String[] temp)
+	// Method that helps DrawTree by using find method to obtain the Nodes' name in the tree and a position value
+	public void toDraw(String[] names, int[] positions)
 	{
 		setArrayCounter(0);
-		preorder(temp, getRoot());
+		find(names, positions, getRoot(), 1);
+	}
+	
+	// A preorder traversal of the tree that obtains the names of each node and their position value
+	private void find(String[] names, int[] positions, Node current, int p)
+	{
+		if(current != null)
+		{
+			names[getArrayCounter()] = current.getName();
+			positions[getArrayCounter()] = p;
+			incrementArrayCounter();
+			
+			// Keep track of the position by multiplying by 5 every time we go left or adding 3 if we go right
+			find(names, positions, current.getLeftChild(), p*5);
+			find(names, positions, current.getRightChild(), p+3);
+		}
 	}
 	
 	// Private Node class

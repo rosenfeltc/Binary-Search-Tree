@@ -118,6 +118,7 @@ public class GUI extends JFrame
 				}
 			}
 		});
+		
 		// Display Button
 		// First the radio buttons
 		inorder.addActionListener(new ActionListener()
