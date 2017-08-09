@@ -21,9 +21,21 @@ import javax.swing.JTextArea;
 
 public class GUI extends JFrame
 {
-	// The radio box selection
+	// The radio button selection
 	private int selection;
 	
+	// Selection Getter
+	private int getSelection()
+	{
+		return this.selection;
+	}
+			
+	// Selection Setter
+	private void setSelection(int selection)
+	{
+		this.selection = selection;
+	}
+		
 	// The Constructor
 	public GUI(BinaryTree tree)
 	{	
@@ -68,7 +80,7 @@ public class GUI extends JFrame
 		
 		// The Window
 		setSize(500, 150);
-		setLocation(800,500);
+		setLocation(600,500);
 		setTitle("Binary Search Tree");
 		add(radios, BorderLayout.PAGE_START);
 		add(buttons, BorderLayout.CENTER);
@@ -87,7 +99,7 @@ public class GUI extends JFrame
 				
 				do
 				{
-					toCreate = JOptionPane.showInputDialog("Please enter the name of the user you want to add into the Binary Tree"
+					toCreate = JOptionPane.showInputDialog("Please enter the name of the user you want to add to the Binary Tree"
 							+ "\n(maximum 6 characters)");
 					
 					if(toCreate.length() > 6)
@@ -119,12 +131,14 @@ public class GUI extends JFrame
 			}
 		});
 		
-		// Display Button
+		// Display Button is next but...
 		// First the radio buttons
 		inorder.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
+				// selection is the int that is passed in to the print method in BinaryTree.java
+				// so that it knows what traversal order to use
 				setSelection(0);
 				display.setEnabled(true);
 			}
@@ -134,6 +148,8 @@ public class GUI extends JFrame
 		{
 			public void actionPerformed(ActionEvent e)
 			{
+				// selection is the int that is passed in to the print method in BinaryTree.java
+				// so that it knows what traversal order to use
 				setSelection(1);
 				display.setEnabled(true);
 			}
@@ -143,12 +159,14 @@ public class GUI extends JFrame
 		{
 			public void actionPerformed(ActionEvent e)
 			{
+				// selection is the int that is passed in to the print method in BinaryTree.java
+				// so that it knows what traversal order to use
 				setSelection(2);
 				display.setEnabled(true);
 			}
 		});
 		
-		// Finally the display button
+		// Now the display button
 		display.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -156,11 +174,16 @@ public class GUI extends JFrame
 				// Create the String that will store the Binary Tree information
 				String content = tree.print(getSelection());
 				
+				// The content on a text area
 				JTextArea text = new JTextArea(content);
 				text.setEditable(false);
+				
+				// The content on a scroll pane
 				JScrollPane scroll = new JScrollPane(text);
+				
+				// The Window settings with the scroll pane added
 				JFrame newWindow = new JFrame("Binary Tree Contents:");
-				newWindow.setLocation(800, 500);
+				newWindow.setLocation(600, 500);
 				newWindow.setSize(400, 400);
 				newWindow.setResizable(false);
 				newWindow.add(scroll);
@@ -169,11 +192,13 @@ public class GUI extends JFrame
 			}
 		});
 		
-		// TO DO DRAW TREE
+		// Draw Tree button
 		draw.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
+				// Create a new Window that displays the tree drawn with the
+				// help of the DrawTree.java class
 				DrawTree drawWindow = new DrawTree(tree);
 			}
 		});
@@ -183,7 +208,9 @@ public class GUI extends JFrame
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the tree?", "Warning!", JOptionPane.YES_NO_OPTION);
+				// Confirm that the user wants to delete the entire tree
+				int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the tree?",
+						"Warning!", JOptionPane.YES_NO_OPTION);
 				
 				if(choice == 0)
 				{
@@ -200,18 +227,5 @@ public class GUI extends JFrame
 				System.exit(0);
 			}
 		});
-	}
-	
-	// Selection Getter
-	private int getSelection()
-	{
-		return this.selection;
-	}
-		
-	// Selection Setter
-	private void setSelection(int selection)
-	{
-		this.selection = selection;
-	}
-		
+	}	
 }

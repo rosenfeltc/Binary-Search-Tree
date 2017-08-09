@@ -1,5 +1,5 @@
-/* This is the BinaryTree.java class which handles the creation and all the operations on a Binary Search Tree.
- * This class also contains the Private class Node which handles the creation and all the operations on a single Node
+/* This is the BinaryTree.java class which handles the creation and all the operations of a Binary Search Tree.
+ * This class also contains the Private class Node which handles the creation and all the operations of a single Node
  * inside the Binary Search Tree.
  * Coded by Christopher Rosenfelt for CSI 213
  */
@@ -109,7 +109,7 @@ public class BinaryTree
 		else
 		{
 			// Passing the Root reference as the starting point for the Node insertion
-			// as well as the reference to the newly create Node
+			// as well as the reference to the newly created Node
 			insert(getRoot(), newNode);
 			
 			// Balance the tree only if necessary - ie. checkBalance is true and
@@ -166,8 +166,8 @@ public class BinaryTree
 		}
 	}// END recursive insert method
 	
-	// Method that searches the binary tree for the Node that contains the inputted String
-	// used by delete method to find the appropriate Node to delete
+	// Method that searches the binary tree for the Node that contains the inputted String.
+	// In this program the method is used by the delete method to find the appropriate Node to delete
 	private Node search(String name)
 	{
 		// Check to see if the list is empty
@@ -185,7 +185,7 @@ public class BinaryTree
 	// the passed in String name, returns the reference to that Node if found otherwise returns null
 	private Node search(Node traverse, String name)
 	{	
-		// Haven't reach a dead-end yet
+		// Haven't reached a dead-end yet
 		if(traverse != null)
 		{
 			// Check to see if the current Node matches the String
@@ -230,8 +230,7 @@ public class BinaryTree
 			if(getRoot().isLeaf())
 			{
 				// Deleting the Root (aka destroying the Binary Tree)
-				setRoot(null);
-				decrementCounter();
+				destroy();
 			}
 			// Root only has a left child
 			else if(getRoot().getRightChild() == null)
@@ -476,10 +475,18 @@ public class BinaryTree
 		}
 		
 		// Create the empty String that will be storing the names of each Node
+		// minor adjustment so a newline isn't inserted at the end of the last String
 		String content = new String();
 		for(int i = 0; i < temp.length; i++)
 		{
-			content += temp[i] + "\n";
+			if(i == temp.length - 1)
+			{
+				content += temp[i];
+			}
+			else
+			{
+				content += temp[i] + "\n";
+			}
 		}
 		
 		return content;
@@ -542,11 +549,12 @@ public class BinaryTree
 		{
 			return 0;
 		}
-		// Tree is not empty so use recursive depth method start at Root level 1 to figure out depth
+		// Tree is not empty so use recursive depth method starting at Root level 1 to figure out depth
 		return depth(getRoot(), 1);
 	}
 	
-	// Method that helps figure out the depth of the Binary Tree
+	// Method that helps figure out the depth of the Binary Tree by traversing each subtree and keeping track of the level it is at
+	// ultimately returns the maximum level reached
 	private int depth(Node current, int level)
 	{
 		// Current Node has two Children
@@ -603,10 +611,10 @@ public class BinaryTree
 	}
 	
 	// Balance recursive helper method - recursively finds the median of each subtree of the oldtree at the median spot
-	// using the find method to find the median Node each time and return its String name
+	// through the use of the String[] array that stored the old tree names inorder. Obtains that median and passes it to the insert
+	// method with the boolean false so that it doesn't attempt to balance the new tree since it is already being created in balance
 	private void balance(BinaryTree tree, String[] temp, int low, int high)
 	{
-		
 		if(low < high)
 		{
 			// The current median
@@ -626,7 +634,7 @@ public class BinaryTree
 	// current number of nodes in the binary tree
 	public int howManyLevels()
 	{
-		// Formula is the ceiling of the log base 2 of the current number of nodes + 1
+		// Formula is the ceiling of the log base 2 of (the current number of nodes + 1)
 		return (int) Math.ceil(Math.log(getCounter() + 1) / Math.log(2));
 	}
 	
